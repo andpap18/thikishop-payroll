@@ -294,9 +294,13 @@ def process_payroll(uploaded_files, target_month):
                     
                     col_ptr += span
                 
-                # Threshold is ALWAYS 40 hours (5-day work week standard)
-                # This applies regardless of how many days were actually worked
-                weekly_threshold = 40
+                # Calculate Dynamic Threshold
+                # Special case: ΗΛΙΑΣ ΚΑΨΑΛΗΣ has 20 hours threshold (part-time)
+                # All others have 40 hours (5-day work week standard)
+                if clean_n.upper() == "ΗΛΙΑΣ ΚΑΨΑΛΗΣ":
+                    weekly_threshold = 20
+                else:
+                    weekly_threshold = 40
                 
                 overwork = 0
                 overtime = 0
