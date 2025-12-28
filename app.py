@@ -295,12 +295,34 @@ def process_payroll(uploaded_files, target_month):
                     col_ptr += span
                 
                 # Calculate Dynamic Threshold
-                # Special case: ΗΛΙΑΣ ΚΑΨΑΛΗΣ has 20 hours threshold (part-time)
-                # All others have 40 hours (5-day work week standard)
-                if clean_n.upper() == "ΗΛΙΑΣ ΚΑΨΑΛΗΣ":
-                    weekly_threshold = 20
+                # If week is "cut" (incomplete - less than 7 days included in target month), use days_worked × 8
+                # Otherwise, use standard thresholds (40 hours for full-time, 20 for ΗΛΙΑΣ ΚΑΨΑΛΗΣ)
+                
+                # Count how many days are included in this week (for the target month)
+                days_included_in_week = 0
+                col_ptr_check = 2
+                for day_idx in range(7):
+                    is_sunday = (day_idx == 6)
+                    span = 1 if is_sunday else 4
+                    # Check if at least one column of this day is included
+                    if any(include_col_map.get(col_ptr_check + k, True) for k in range(span)):
+                        days_included_in_week += 1
+                    col_ptr_check += span
+                
+                # If week is incomplete (cut week at start/end of month), use days_worked × 8
+                if days_included_in_week < 7:
+                    # Cut week: threshold = days_worked × 8
+                    if clean_n.upper() == "ΗΛΙΑΣ ΚΑΨΑΛΗΣ":
+                        # For ΗΛΙΑΣ ΚΑΨΑΛΗΣ, half-time: days_worked × 4
+                        weekly_threshold = days_worked * 4
+                    else:
+                        weekly_threshold = days_worked * 8
                 else:
-                    weekly_threshold = 40
+                    # Full week: use standard thresholds
+                    if clean_n.upper() == "ΗΛΙΑΣ ΚΑΨΑΛΗΣ":
+                        weekly_threshold = 20
+                    else:
+                        weekly_threshold = 40
                 
                 overwork = 0
                 overtime = 0
