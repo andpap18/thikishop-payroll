@@ -960,14 +960,7 @@ with tab1:
             help="Μπορείς να επιλέξεις πολλά αρχεία ταυτόχρονα",
             key="payroll_upload"
         )
-    uploaded_files = st.file_uploader(
-        "Επίλεξε αρχεία Excel (ΕΠΙΘ).xlsx",
-        type=['xlsx'],
-        accept_multiple_files=True,
-        help="Μπορείς να επιλέξεις πολλά αρχεία ταυτόχρονα",
-        key="payroll_upload"
-    )
-    
+        
         if uploaded_files:
             st.success(f"✅ **{len(uploaded_files)}** αρχεία ανέβηκαν επιτυχώς!")
             with st.expander("📋 Προβολή αρχείων", expanded=False):
