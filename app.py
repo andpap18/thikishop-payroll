@@ -292,7 +292,9 @@ def process_payroll(uploaded_files, target_month):
                     
                     col_ptr += span
                 
-                weekly_threshold = days_worked * 8
+                # Threshold is ALWAYS 40 hours (5-day work week standard)
+                # This applies regardless of how many days were actually worked
+                weekly_threshold = 40
                 
                 overwork = 0
                 overtime = 0
