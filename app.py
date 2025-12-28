@@ -34,8 +34,9 @@ def parse_hours(time_str):
     
     time_str = re.sub(r'\[.*?\]', '', time_str).strip()
     
-    # Special case: "Α" (leave/vacation) counts as 8 hours
-    if time_str.upper() == 'Α' or time_str.upper() == 'A':
+    # Special case: "Α", "ΑΔΕΙΑ", or "ΑΡΓΙΑ" (leave/vacation/holiday) counts as 8 hours
+    time_upper = time_str.upper()
+    if time_upper == 'Α' or time_upper == 'A' or 'ΑΔΕΙΑ' in time_upper or 'ADEIA' in time_upper or 'ΑΡΓΙΑ' in time_upper or 'ARGIA' in time_upper:
         return 8.0
     
     if '-' not in time_str:
@@ -272,7 +273,8 @@ def process_payroll(uploaded_files, target_month):
                             if c_in.fill: c_out.fill = PatternFill(start_color=c_in.fill.start_color.index, fill_type='solid')
                             
                             val = str(c_in.value).strip() if c_in.value else ""
-                            if val and val not in ["None", "RR", "ΡΕΠΟ", "ΑΝΑΡΡΩΤΙΚΗ", "ΑΔΕΙΑ"]:
+                            # Note: "Α" and "ΑΔΕΙΑ" are handled by parse_hours (counts as 8 hours)
+                            if val and val not in ["None", "RR", "ΡΕΠΟ"]:
                                  h = parse_hours(val)
                                  if h > 0: day_hours += h
                         else:
