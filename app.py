@@ -835,212 +835,253 @@ def process_cost_analysis(uploaded_files, employee_costs, target_month):
     return output, location_costs, debug_colors
 
 # === STREAMLIT UI ===
+# === STREAMLIT UI ===
 st.set_page_config(
     page_title="ThikiShop Μισθοδοσία & Κοστολόγηση", 
-    page_icon="📊", 
+    page_icon="✨", 
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
+# Modern Custom CSS
 st.markdown("""
-    <style>
-    /* Main styling */
-    .main {
-        padding-top: 2rem;
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
     }
     
-    /* Hero section */
-    .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 10px;
+    /* Main area background */
+    .stApp {
+        background-color: #f4f7fb;
+    }
+
+    /* Hero header */
+    .hero-container {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        padding: 2.5rem;
+        border-radius: 16px;
         color: white;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 30px rgba(30, 60, 114, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 10%, transparent 40%);
+        transform: rotate(30deg);
+        pointer-events: none;
     }
     
     .hero-title {
-        font-size: 2.5rem;
-        font-weight: bold;
+        font-size: 2.8rem;
+        font-weight: 800;
         margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
     }
-    
     .hero-subtitle {
-        font-size: 1.1rem;
-        opacity: 0.9;
+        font-size: 1.2rem;
+        font-weight: 300;
+        opacity: 0.85;
     }
     
-    /* Step cards */
+    /* Cards for Steps */
     .step-card {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 8px;
-        border-left: 4px solid #667eea;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        padding: 2rem;
+        border-radius: 16px;
         margin-bottom: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .step-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
     }
     
-    /* Info boxes */
-    .info-box {
-        background: #e3f2fd;
-        padding: 1rem;
-        border-radius: 6px;
-        border-left: 4px solid #2196f3;
-        margin: 1rem 0;
+    /* Styled Headers within Steps */
+    .step-title {
+        color: #1e3c72;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 2px solid #edf2f7;
+        padding-bottom: 0.5rem;
     }
     
-    /* Success box */
-    .success-box {
-        background: #e8f5e9;
-        padding: 1rem;
-        border-radius: 6px;
-        border-left: 4px solid #4caf50;
-        margin: 1rem 0;
-    }
-    
-    /* Metrics styling */
-    .metric-card {
-        background: white;
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        text-align: center;
-    }
-    
-    /* Button styling */
+    /* Elegant Buttons */
     .stButton > button {
-        border-radius: 6px;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.6rem 2rem;
         font-weight: 600;
-        transition: all 0.3s;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
     }
-    
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 25px rgba(0, 242, 254, 0.5);
     }
     
-    /* File uploader styling */
-    .uploadedFile {
-        background: #f0f2f6;
-        border-radius: 6px;
+    /* Metrics container */
+    [data-testid="metric-container"] {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        border-left: 4px solid #4facfe;
     }
     
-    /* Tab styling */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+    /* Sidebar styling tweaks */
+    [data-testid="stSidebar"] {
+        background-color: #ffffff;
+        border-right: 1px solid #e0e6ed;
     }
     
-    .stTabs [data-baseweb="tab"] {
-        border-radius: 8px 8px 0 0;
-        padding: 10px 20px;
+    /* File uploader hover */
+    .stFileUploader > div > div {
+        border-radius: 12px;
+        border: 2px dashed #a0aec0;
+        background-color: #f8fafc;
+        transition: all 0.3s;
+    }
+    .stFileUploader > div > div:hover {
+        border-color: #4facfe;
+        background-color: #ebf8ff;
     }
     
     /* Footer */
-    .footer {
+    .modern-footer {
         text-align: center;
         padding: 2rem;
-        color: #666;
-        margin-top: 3rem;
+        color: #718096;
+        font-size: 0.9rem;
+        margin-top: 4rem;
+        border-top: 1px solid #e2e8f0;
     }
-    </style>
+
+    /* Tabs Override */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background: transparent;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 8px 8px 0 0;
+        padding: 12px 24px;
+        font-weight: 600;
+        background-color: #e2e8f0;
+        color: #4a5568;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #ffffff;
+        color: #1e3c72;
+        border-top: 3px solid #4facfe;
+    }
+</style>
 """, unsafe_allow_html=True)
 
-# Hero Section
+# --- SIDEBAR (Instructions) ---
+with st.sidebar:
+    st.markdown("<h2 style='text-align: center; color: #1e3c72;'>📖 Οδηγίες</h2>", unsafe_allow_html=True)
+    st.markdown("---")
+    
+    st.markdown("### 1️⃣ Ανέβασμα")
+    st.info("Σύρε και άφησε τα εβδομαδιαία προγράμματα `(ΕΠΙΘ).xlsx` στο αντίστοιχο πεδίο.")
+    
+    st.markdown("### 2️⃣ Επιλογή Μήνα")
+    st.info("Επίλεξε τον μήνα για τον οποίο θέλεις να τρέξει ο υπολογισμός.")
+    
+    st.markdown("### 3️⃣ Εξαγωγή")
+    st.info("Πάτα **«Δημιουργία»** για να υπολογιστούν αυτόματα Υπερεργασίες, Υπερωρίες και Συνολικό Κόστος.")
+    
+    st.markdown("---")
+    st.markdown("**💡 Έξυπνοι Υπολογισμοί:**")
+    st.markdown("- **Κανονικό:** 40 ώρες\n- **Κομμένη Εβδ.:** Αναλογικά\n- **Κόστος:** Ανά Κατάστημα")
+    
+    st.markdown("<div style='margin-top: 50px; text-align: center; font-size: 12px; color: #a0aec0;'>Version 2.0.0 Pro</div>", unsafe_allow_html=True)
+
+# --- HERO SECTION ---
 st.markdown("""
-    <div class="hero-section">
-        <div class="hero-title">📊 ThikiShop</div>
-        <div class="hero-subtitle">Σύστημα Αυτοματοποιημένης Μισθοδοσίας & Κοστολόγησης</div>
-    </div>
+<div class="hero-container">
+    <div class="hero-title">✨ ThikiShop Insights</div>
+    <div class="hero-subtitle">Υπερσύγχρονο Σύστημα Αυτοματοποιημένης Μισθοδοσίας & Κοστολόγησης</div>
+</div>
 """, unsafe_allow_html=True)
 
-# Create tabs
-tab1, tab2 = st.tabs(["💰 Μισθοδοσία", "🏪 Κοστολόγηση Καταστημάτων"])
+# Tabs
+tab1, tab2 = st.tabs(["💶 Μισθοδοσία (Εργαζόμενοι)", "🏪 Κοστολόγηση"])
+
+month_names_display = {
+    1: 'Ιανουάριος', 2: 'Φεβρουάριος', 3: 'Μάρτιος', 4: 'Απρίλιος',
+    5: 'Μάιος', 6: 'Ιούνιος', 7: 'Ιούλιος', 8: 'Αύγουστος',
+    9: 'Σεπτέμβριος', 10: 'Οκτώβριος', 11: 'Νοέμβριος', 12: 'Δεκέμβριος'
+}
 
 # === TAB 1: PAYROLL ===
 with tab1:
-    # Header with info
-    col_header1, col_header2 = st.columns([3, 1])
-    with col_header1:
-        st.header("💰 Αυτόματη Δημιουργία Μισθοδοσίας")
-    with col_header2:
-        with st.expander("📖 Οδηγίες", expanded=False):
-            st.markdown("""
-            **Πώς να χρησιμοποιήσεις:**
-            1. Ανέβασε τα `(ΕΠΙΘ).xlsx` αρχεία
-            2. Διάλεξε τον μήνα
-            3. Πάτα "Δημιουργία"
-            4. Κατέβασε το αρχείο
-            
-            **Υπολογισμοί:**
-            - Κανονικές: 40 ώρες
-            - Υπερεργασία: μέχρι 5h
-            - Υπερωρίες: πάνω από 45h
-            """)
+    st.markdown('<div class="step-card">', unsafe_allow_html=True)
+    st.markdown('<div class="step-title">📁 Βήμα 1: Ανέβασμα Προγραμμάτων</div>', unsafe_allow_html=True)
+    uploaded_files = st.file_uploader(
+        "Σύρε τα αρχεία Excel εδώ (ΕΠΙΘ).xlsx",
+        type=['xlsx'],
+        accept_multiple_files=True,
+        help="Μπορείς να επιλέξεις πολλά αρχεία ταυτόχρονα.",
+        key="payroll_upload"
+    )
+    if uploaded_files:
+        st.success(f"✅ Ανέβηκαν **{len(uploaded_files)}** αρχεία επιτυχώς!")
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    # Step 1: File Upload
-    st.markdown("### 📁 Βήμα 1: Ανέβασε τα Εβδομαδιαία Προγράμματα")
-    with st.container():
-        uploaded_files = st.file_uploader(
-            "Επίλεξε αρχεία Excel (ΕΠΙΘ).xlsx",
-            type=['xlsx'],
-            accept_multiple_files=True,
-            help="Μπορείς να επιλέξεις πολλά αρχεία ταυτόχρονα",
-            key="payroll_upload"
-        )
-        
-        if uploaded_files:
-            st.success(f"✅ **{len(uploaded_files)}** αρχεία ανέβηκαν επιτυχώς!")
-            with st.expander("📋 Προβολή αρχείων", expanded=False):
-                for f in uploaded_files:
-                    st.write(f"📄 {f.name}")
+    st.markdown('<div class="step-card">', unsafe_allow_html=True)
+    st.markdown('<div class="step-title">📅 Βήμα 2: Επιλογή & Εκτέλεση</div>', unsafe_allow_html=True)
     
-    # Step 2: Month Selection
-    st.markdown("### 📅 Βήμα 2: Επιλογή Μήνα")
-    month_names_display = {
-        1: 'Ιανουάριος', 2: 'Φεβρουάριος', 3: 'Μάρτιος', 4: 'Απρίλιος',
-        5: 'Μάιος', 6: 'Ιούνιος', 7: 'Ιούλιος', 8: 'Αύγουστος',
-        9: 'Σεπτέμβριος', 10: 'Οκτώβριος', 11: 'Νοέμβριος', 12: 'Δεκέμβριος'
-    }
-    
-    col_month1, col_month2 = st.columns([2, 3])
-    with col_month1:
+    col_select, col_btn = st.columns([1, 1])
+    with col_select:
         selected_month = st.selectbox(
-            "Επίλεξε μήνα:",
+            "Μήνας Υπολογισμού:",
             options=list(month_names_display.keys()),
             format_func=lambda x: month_names_display[x],
             index=10,
             key="payroll_month"
         )
-    with col_month2:
-        st.markdown(f"<br><p style='color: #666;'>Επιλεγμένος μήνας: <strong>{month_names_display[selected_month]}</strong></p>", unsafe_allow_html=True)
-    
-    # Step 3: Generate Payroll
-    st.markdown("### 🚀 Βήμα 3: Δημιουργία Μισθοδοσίας")
-    
-    col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
-    with col_btn2:
-        generate_btn = st.button("🚀 Δημιουργία Μισθοδοσίας", type="primary", use_container_width=True, key="gen_payroll")
+    with col_btn:
+        st.write("") # Vertical alignment
+        st.write("") # Vertical alignment
+        generate_btn = st.button("🚀 Δημιουργία Μισθοδοσίας", use_container_width=True, key="gen_payroll")
+    st.markdown('</div>', unsafe_allow_html=True)
     
     if generate_btn:
         if not uploaded_files:
-            st.error("❌ **Σφάλμα:** Παρακαλώ ανέβασε τουλάχιστον ένα αρχείο!")
+            st.error("❌ Παρακαλώ ανέβασε τουλάχιστον ένα αρχείο!")
         else:
-            with st.spinner(f"⏳ Επεξεργασία {len(uploaded_files)} αρχείων... Παρακαλώ περιμένετε..."):
+            with st.spinner(f"⏳ Επεξεργασία δεδομένων... Παρακαλώ περιμένετε..."):
                 try:
                     output_file, filename, monthly_stats = process_payroll(uploaded_files, selected_month)
                     
-                    st.success(f"✅ **Επιτυχία!** Το αρχείο '{filename}' δημιουργήθηκε!")
-                    
-                    # Store in session state for Tab 2
                     st.session_state['payroll_file'] = output_file
                     st.session_state['payroll_filename'] = filename
                     st.session_state['monthly_stats'] = monthly_stats
                     
-                    # Show summary stats
+                    st.success(f"🎉 **Επιτυχία!** Το αρχείο '{filename}' είναι έτοιμο!")
+                    
                     if monthly_stats:
-                        st.markdown("---")
-                        st.markdown("### 📊 Συνοπτικά Στατιστικά")
+                        st.markdown("### 📊 Συνοπτικά Στατιστικά Μήνα")
                         total_employees = len(monthly_stats)
                         total_days = sum(s['days_worked'] for s in monthly_stats.values())
                         total_overwork = sum(s['overwork'] for s in monthly_stats.values())
@@ -1050,219 +1091,130 @@ with tab1:
                         with col1:
                             st.metric("👥 Εργαζόμενοι", total_employees)
                         with col2:
-                            st.metric("📅 Ημέρες Εργασίας", total_days)
+                            st.metric("📅 Ημέρες", total_days)
                         with col3:
-                            st.metric("⚡ Υπερεργασία", f"{total_overwork:.1f}h")
+                            st.metric("⚡ Υπερεργασία (h)", f"{total_overwork:.1f}")
                         with col4:
-                            st.metric("🔥 Υπερωρίες", f"{total_overtime:.1f}h")
+                            st.metric("🔥 Υπερωρίες (h)", f"{total_overtime:.1f}")
                     
-                    st.markdown("---")
-                    
-                    # Download Button
+                    st.markdown("<br>", unsafe_allow_html=True)
                     st.download_button(
-                        label="📥 Κατέβασε το Αρχείο Μισθοδοσίας",
+                        label="📥 Λήψη Αρχείου Μισθοδοσίας",
                         data=output_file,
                         file_name=filename,
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True,
-                        type="primary"
+                        use_container_width=True
                     )
-                    
-                    st.info("💡 **Συμβουλή:** Μπορείς να πας στο Tab 'Κοστολόγηση Καταστημάτων' για να υπολογίσεις το κόστος ανά κατάστημα!")
                     
                 except Exception as e:
                     st.error(f"❌ **Σφάλμα:** {str(e)}")
-                    with st.expander("🔍 Λεπτομέρειες Σφάλματος"):
-                        st.exception(e)
+                    st.exception(e)
 
 # === TAB 2: COST ANALYSIS ===
 with tab2:
-    # Header with info
-    col_header1, col_header2 = st.columns([3, 1])
-    with col_header1:
-        st.header("🏪 Κοστολόγηση Ανά Κατάστημα")
-    with col_header2:
-        with st.expander("📖 Οδηγίες", expanded=False):
-            st.markdown("""
-            **Πώς να χρησιμοποιήσεις:**
-            1. Ανέβασε τα `(ΕΠΙΘ).xlsx` αρχεία
-            2. Διάλεξε τον μήνα
-            3. Συμπλήρωσε μηνιαίο κόστος
-            4. Πάτα "Δημιουργία"
-            5. Κατέβασε το αρχείο
-            
-            **Υπολογισμοί:**
-            - Ημερήσιο = Μηνιαίο ÷ Ημέρες
-            - Κόστος ανά κατάστημα
-            """)
+    st.markdown('<div class="step-card">', unsafe_allow_html=True)
+    st.markdown('<div class="step-title">📁 Βήμα 1: Αρχεία & Μήνας</div>', unsafe_allow_html=True)
     
-    # Step 1: File Upload
-    st.markdown("### 📁 Βήμα 1: Ανέβασε τα Εβδομαδιαία Προγράμματα")
-    
-    # Check if we can reuse from Tab 1
-    if 'monthly_stats' in st.session_state:
-        st.info("💡 **Συμβουλή:** Μπορείς να χρησιμοποιήσεις τα ίδια αρχεία από το Tab Μισθοδοσία ή να ανεβάσεις νέα!")
-        monthly_stats = st.session_state['monthly_stats']
+    if 'monthly_stats' in st.session_state and 'payroll_upload' in st.session_state and st.session_state['payroll_upload']:
+        st.info("💡 **Τα αρχεία φορτώθηκαν αυτόματα** από την προηγούμενη καρτέλα (Μισθοδοσία).")
+        cost_uploaded_files = st.session_state['payroll_upload']
+        cost_selected_month = st.session_state.get('payroll_month', 10)
     else:
-        monthly_stats = None
-    
-    with st.container():
-        cost_uploaded_files = st.file_uploader(
-            "Επίλεξε αρχεία Excel (ΕΠΙΘ).xlsx",
-            type=['xlsx'],
-            accept_multiple_files=True,
-            help="Μπορείς να επιλέξεις πολλά αρχεία ταυτόχρονα",
-            key="cost_upload"
-        )
-        
-        if cost_uploaded_files:
-            st.success(f"✅ **{len(cost_uploaded_files)}** αρχεία ανέβηκαν επιτυχώς!")
-            with st.expander("📋 Προβολή αρχείων", expanded=False):
-                for f in cost_uploaded_files:
-                    st.write(f"📄 {f.name}")
-    
-    # Step 2: Month Selection
-    st.markdown("### 📅 Βήμα 2: Επιλογή Μήνα")
-    col_month1, col_month2 = st.columns([2, 3])
-    with col_month1:
-        cost_selected_month = st.selectbox(
-            "Επίλεξε μήνα:",
-            options=list(month_names_display.keys()),
-            format_func=lambda x: month_names_display[x],
-            index=10,
-            key="cost_month"
-        )
-    with col_month2:
-        st.markdown(f"<br><p style='color: #666;'>Επιλεγμένος μήνας: <strong>{month_names_display[cost_selected_month]}</strong></p>", unsafe_allow_html=True)
-    
-    # Get employee list and work days from uploaded files
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            cost_uploaded_files = st.file_uploader(
+                "Ανέβασε Εβδομαδιαία Προγράμματα (ΕΠΙΘ).xlsx", 
+                type=['xlsx'], accept_multiple_files=True, key="cost_upload"
+            )
+        with col2:
+            cost_selected_month = st.selectbox(
+                "Επιλογή Μήνα:",
+                options=list(month_names_display.keys()),
+                format_func=lambda x: month_names_display[x],
+                index=10, key="cost_month"
+            )
+    st.markdown('</div>', unsafe_allow_html=True)
+
     if cost_uploaded_files:
-        # Calculate work days dynamically from the uploaded files
-        with st.spinner("🔄 Υπολογισμός ημερών εργασίας από τα αρχεία..."):
+        with st.spinner("🔄 Εύρεση ημερών εργασίας..."):
             current_work_days = get_monthly_work_days(cost_uploaded_files, cost_selected_month)
         
         if current_work_days:
             employee_list = sorted(list(current_work_days.keys()))
-            st.success(f"✅ **{len(employee_list)}** εργαζόμενοι βρέθηκαν! Οι ημέρες εργασίας υπολογίστηκαν αυτόματα.")
-        else:
-            st.warning("⚠️ Δεν βρέθηκαν εργαζόμενοι στα αρχεία.")
-            employee_list = []
-
-        if employee_list:
-            st.markdown("### 💰 Βήμα 3: Καταχώρηση Μηνιαίου Κόστους")
             
-            st.markdown("Συμπλήρωσε το **μηνιαίο κόστος** (€) για κάθε εργαζόμενο. Το ημερήσιο κόστος υπολογίζεται αυτόματα:")
-            
+            st.markdown('<div class="step-card">', unsafe_allow_html=True)
+            st.markdown(f'<div class="step-title">💰 Βήμα 2: Μηνιαίο Κόστος ανά Εργαζόμενο ({len(employee_list)} συνολικά)</div>', unsafe_allow_html=True)
             employee_costs = {}
-            
-            # Create form for employee costs
-            cols = st.columns(2)
+            cols = st.columns(3) # Use 3 columns for better spacing
             for idx, employee_name in enumerate(employee_list):
-                col = cols[idx % 2]
-                
+                col = cols[idx % 3]
                 with col:
-                    # Get days worked
                     days = current_work_days.get(employee_name, 0)
-                    days_info = f" ({days} ημέρες)"
-                    
                     monthly_cost = st.number_input(
-                        f"{employee_name}{days_info}",
-                        min_value=0.0,
-                        step=0.01,
-                        format="%.2f",
+                        f"{employee_name} ({days}ημ)",
+                        min_value=0.0, step=10.0, format="%.2f",
                         key=f"cost_{employee_name}"
                     )
-                    
-                    if monthly_cost > 0:
-                        # Calculate daily cost
-                        if days > 0:
-                            daily_cost = monthly_cost / days
-                            employee_costs[employee_name] = daily_cost
-                            st.caption(f"→ Ημερήσιο: {daily_cost:.2f}€ (÷{days})")
-                        else:
-                            st.warning(f"⚠️ Δεν δούλεψε καμία μέρα (Διαίρεση με 0)!")
-                            employee_costs[employee_name] = 0.0
+                    if monthly_cost > 0 and days > 0:
+                        daily_cost = monthly_cost / days
+                        employee_costs[employee_name] = daily_cost
+                        st.caption(f"→ {daily_cost:.2f}€ / ημέρα")
+                    elif days == 0 and monthly_cost > 0:
+                        employee_costs[employee_name] = 0.0
+                        st.error("Σφάλμα: 0 ημέρες.")
+            st.markdown('</div>', unsafe_allow_html=True)
             
-            st.markdown("### 🚀 Βήμα 4: Δημιουργία Κοστολόγησης")
-            
-            col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
-            with col_btn2:
-                generate_cost_btn = st.button("🚀 Δημιουργία Κοστολόγησης", type="primary", use_container_width=True, key="gen_cost")
+            st.markdown('<div class="step-card">', unsafe_allow_html=True)
+            st.markdown('<div class="step-title">🚀 Βήμα 3: Παραγωγή Αναφοράς</div>', unsafe_allow_html=True)
+            col_b1, col_b2, col_b3 = st.columns([1, 2, 1])
+            with col_b2:
+                generate_cost_btn = st.button("📊 Κοστολόγηση Καταστημάτων", use_container_width=True, key="gen_cost")
             
             if generate_cost_btn:
                 if not employee_costs:
-                    st.error("❌ Παρακαλώ συμπλήρωσε κόστη για τουλάχιστον έναν εργαζόμενο!")
+                    st.error("❌ Δεν δώσατε κανένα μηνιαίο κόστος!")
                 else:
-                    with st.spinner("⏳ Υπολογισμός κόστους ανά κατάστημα... Παρακαλώ περιμένετε..."):
+                    with st.spinner("⏳ Υπολογισμός μεριδίων ανά κατάστημα..."):
                         try:
                             cost_file, location_costs, debug_colors = process_cost_analysis(cost_uploaded_files, employee_costs, cost_selected_month)
                             
-                            st.success("✅ **Επιτυχία!** Η κοστολόγηση δημιουργήθηκε!")
+                            st.success("✅ **Η αναφορά ολοκληρώθηκε!**")
                             
-                            # Show summary with metrics
-                            st.markdown("---")
-                            st.markdown("### 📊 Κόστος Ανά Κατάστημα")
-                            
+                            st.markdown("### 🏆 Ανάλυση Κόστους Καταστημάτων")
                             total_cost = sum(location_costs.values())
                             
-                            if total_cost == 0:
-                                st.warning("⚠️ Το συνολικό κόστος είναι 0! Ελέγξτε αν τα ονόματα ταιριάζουν ακριβώς με τα αρχεία.")
+                            if total_cost > 0:
+                                locs = ["ΡΕΝΤΗΣ", "ΑΙΓΑΛΕΩ", "ΠΕΙΡΑΙΑΣ", "ΠΕΡΙΣΤΕΡΙ"]
+                                m_cols = st.columns(4)
+                                for idx, loc in enumerate(locs):
+                                    c_val = location_costs.get(loc, 0)
+                                    p_val = (c_val / total_cost * 100)
+                                    with m_cols[idx]:
+                                        st.metric(loc, f"{c_val:,.2f}€", f"{p_val:.1f}%")
+                                
+                                st.markdown("<br>", unsafe_allow_html=True)
+                                st.info(f"**💰 Ταμείο - Συνολικό Κόστος Μήνα:** {total_cost:,.2f}€")
                             else:
-                                # Display as metrics cards
-                                cols = st.columns(4)
-                                locations = ["ΡΕΝΤΗΣ", "ΑΙΓΑΛΕΩ", "ΠΕΙΡΑΙΑΣ", "ΠΕΡΙΣΤΕΡΙ"]
-                                for idx, loc in enumerate(locations):
-                                    cost = location_costs.get(loc, 0)
-                                    percentage = (cost / total_cost * 100) if total_cost > 0 else 0
-                                    with cols[idx]:
-                                        st.metric(
-                                            loc,
-                                            f"{cost:,.2f}€",
-                                            delta=f"{percentage:.1f}%"
-                                        )
-                                
-                                st.markdown("---")
-                                
-                                # Summary table
-                                summary_data = {
-                                    "Κατάστημα": list(location_costs.keys()),
-                                    "Κόστος (€)": [f"{cost:,.2f}" for cost in location_costs.values()],
-                                    "% Συνολικού": [f"{(cost/total_cost*100):.1f}%" for cost in location_costs.values()]
-                                }
-                                
-                                st.dataframe(summary_data, use_container_width=True, hide_index=True)
-                                
-                                # Total cost metric
-                                st.metric("💰 **Συνολικό Κόστος**", f"{total_cost:,.2f}€")
+                                st.warning("⚠️ Προσοχή! Το σύνολο είναι 0€.")
                             
-                            # Download button
-                            month_names = {
-                                1: 'ΙΑΝΟΥΑΡΙΟΣ', 2: 'ΦΕΒΡΟΥΑΡΙΟΣ', 3: 'ΜΑΡΤΙΟΣ', 4: 'ΑΠΡΙΛΙΟΣ',
-                                5: 'ΜΑΙΟΣ', 6: 'ΙΟΥΝΙΟΣ', 7: 'ΙΟΥΛΙΟΣ', 8: 'ΑΥΓΟΥΣΤΟΣ',
-                                9: 'ΣΕΠΤΕΜΒΡΙΟΣ', 10: 'ΟΚΤΩΒΡΙΟΣ', 11: 'ΝΟΕΜΒΡΙΟΣ', 12: 'ΔΕΚΕΜΒΡΙΟΣ'
-                            }
-                            filename = f"ΚΟΣΤΟΛΟΓΗΣΗ_ΚΑΤΑΣΤΗΜΑΤΑ_{month_names.get(cost_selected_month, 'OUTPUT')}.xlsx"
+                            filename = f"ΚΟΣΤΟΛΟΓΗΣΗ_ΚΑΤΑΣΤΗΜΑΤΑ_{month_names_display.get(cost_selected_month, 'OUTPUT').upper()}.xlsx"
                             
-                            st.markdown("---")
+                            st.markdown("<br>", unsafe_allow_html=True)
                             st.download_button(
-                                label="📥 Κατέβασε την Κοστολόγηση",
+                                label="📥 Λήψη Κοστολόγησης",
                                 data=cost_file,
                                 file_name=filename,
                                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                use_container_width=True,
-                                type="primary"
+                                use_container_width=True
                             )
-                            
                         except Exception as e:
                             st.error(f"❌ **Σφάλμα:** {str(e)}")
-                            with st.expander("🔍 Λεπτομέρειες Σφάλματος"):
-                                st.exception(e)
+                            st.exception(e)
+            st.markdown('</div>', unsafe_allow_html=True)
 
-# Footer
-st.markdown("---")
+# --- MODERN FOOTER ---
 st.markdown("""
-    <div class="footer">
-        <p><strong>ThikiShop</strong> - Σύστημα Μισθοδοσίας & Κοστολόγησης</p>
-        <p style="font-size: 0.9em; color: #999;">Powered by Streamlit | Developed with ❤️</p>
-    </div>
+<div class="modern-footer">
+    ThikiShop Pro Analytics &copy; 2026 | Built for performance & aesthetic. 
+</div>
 """, unsafe_allow_html=True)
