@@ -852,21 +852,22 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* Main area background */
+    /* Main area background - Dark Slate */
     .stApp {
-        background-color: #f4f7fb;
+        background-color: #0f172a;
     }
 
     /* Hero header */
     .hero-container {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         padding: 2.5rem;
         border-radius: 16px;
-        color: white;
+        color: #f8fafc;
         margin-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(30, 60, 114, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         position: relative;
         overflow: hidden;
+        border: 1px solid #334155;
     }
     .hero-container::before {
         content: '';
@@ -875,7 +876,7 @@ st.markdown("""
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.05) 10%, transparent 40%);
+        background: radial-gradient(circle, rgba(255,255,255,0.03) 10%, transparent 40%);
         transform: rotate(30deg);
         pointer-events: none;
     }
@@ -885,46 +886,48 @@ st.markdown("""
         font-weight: 800;
         margin-bottom: 0.5rem;
         letter-spacing: -0.5px;
+        color: #f8fafc;
     }
     .hero-subtitle {
         font-size: 1.2rem;
         font-weight: 300;
         opacity: 0.85;
+        color: #cbd5e1;
     }
     
     /* Cards for Steps */
     .step-card {
-        background: rgba(255, 255, 255, 0.85);
+        background: rgba(30, 41, 59, 0.7);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 2rem;
         border-radius: 16px;
         margin-bottom: 1.5rem;
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.04);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .step-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
     
     /* Styled Headers within Steps */
     .step-title {
-        color: #1e3c72;
+        color: #e2e8f0;
         font-weight: 700;
         font-size: 1.3rem;
         margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        border-bottom: 2px solid #edf2f7;
+        border-bottom: 2px solid #334155;
         padding-bottom: 0.5rem;
     }
     
     /* Elegant Buttons */
     .stButton > button {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         border: none;
         border-radius: 12px;
@@ -932,48 +935,58 @@ st.markdown("""
         font-weight: 600;
         font-size: 1.05rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     }
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 242, 254, 0.5);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        color: white;
     }
     
     /* Metrics container */
     [data-testid="metric-container"] {
-        background: white;
+        background: #1e293b;
         padding: 1rem 1.5rem;
         border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        border-left: 4px solid #4facfe;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border-left: 4px solid #3b82f6;
+    }
+    
+    [data-testid="metric-container"] > div {
+        color: #f1f5f9 !important;
     }
     
     /* Sidebar styling tweaks */
     [data-testid="stSidebar"] {
-        background-color: #ffffff;
-        border-right: 1px solid #e0e6ed;
+        background-color: #0f172a;
+        border-right: 1px solid #1e293b;
+    }
+    
+    /* Instruction Text inside sidebar explicitly */
+    [data-testid="stSidebar"] * {
+        color: #cbd5e1 !important;
     }
     
     /* File uploader hover */
     .stFileUploader > div > div {
         border-radius: 12px;
-        border: 2px dashed #a0aec0;
-        background-color: #f8fafc;
+        border: 2px dashed #475569;
+        background-color: #1e293b;
         transition: all 0.3s;
     }
     .stFileUploader > div > div:hover {
-        border-color: #4facfe;
-        background-color: #ebf8ff;
+        border-color: #3b82f6;
+        background-color: #334155;
     }
     
     /* Footer */
     .modern-footer {
         text-align: center;
         padding: 2rem;
-        color: #718096;
+        color: #64748b;
         font-size: 0.9rem;
         margin-top: 4rem;
-        border-top: 1px solid #e2e8f0;
+        border-top: 1px solid #1e293b;
     }
 
     /* Tabs Override */
@@ -985,13 +998,21 @@ st.markdown("""
         border-radius: 8px 8px 0 0;
         padding: 12px 24px;
         font-weight: 600;
-        background-color: #e2e8f0;
-        color: #4a5568;
+        background-color: #1e293b;
+        color: #64748b;
+        border: 1px solid transparent;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #ffffff;
-        color: #1e3c72;
-        border-top: 3px solid #4facfe;
+        background-color: #0f172a;
+        color: #3b82f6;
+        border-top: 3px solid #3b82f6;
+        border-left: 1px solid #1e293b;
+        border-right: 1px solid #1e293b;
+    }
+    
+    /* General text coloring fix for dark mode */
+    h1, h2, h3, h4, p, span, div, label {
+        color: #e2e8f0;
     }
 </style>
 """, unsafe_allow_html=True)
