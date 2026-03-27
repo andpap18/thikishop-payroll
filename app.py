@@ -27,7 +27,7 @@ def clean_name(name):
     name = str(name).split('(')[0]
     return name.strip()
 
-def parse_hours(time_str):
+def parse_hours(time_str, employee_name=""):
     """Parses '09:00-17:00' to decimal hours (e.g., 8.0). Returns 0 if invalid or off."""
     if not time_str or not isinstance(time_str, str):
         return 0.0
@@ -37,6 +37,8 @@ def parse_hours(time_str):
     # Special case: "Α", "ΑΔΕΙΑ", or "ΑΡΓΙΑ" (leave/vacation/holiday) counts as 8 hours
     time_upper = time_str.upper()
     if time_upper == 'Α' or time_upper == 'A' or 'ΑΔΕΙΑ' in time_upper or 'ADEIA' in time_upper or 'ΑΡΓΙΑ' in time_upper or 'ARGIA' in time_upper:
+        if employee_name.upper() == "ΗΛΙΑΣ ΚΑΨΑΛΗΣ":
+            return 4.0
         return 8.0
     
     if '-' not in time_str:
@@ -275,7 +277,7 @@ def process_payroll(uploaded_files, target_month):
                             val = str(c_in.value).strip() if c_in.value else ""
                             # Note: "Α" and "ΑΔΕΙΑ" are handled by parse_hours (counts as 8 hours)
                             if val and val not in ["None", "RR", "ΡΕΠΟ"]:
-                                 h = parse_hours(val)
+                                 h = parse_hours(val, clean_n)
                                  if h > 0: day_hours += h
                         else:
                             c_out.value = ""
@@ -528,7 +530,7 @@ def get_monthly_work_days(uploaded_files, target_month):
                             c = ws.cell(row=row_idx, column=col_ptr + k)
                             val = str(c.value).strip() if c.value else ""
                             if val and val not in ["None", "RR", "ΡΕΠΟ", "ΑΝΑΡΡΩΤΙΚΗ", "ΑΔΕΙΑ"]:
-                                h = parse_hours(val)
+                                h = parse_hours(val, clean_n)
                                 if h > 0: day_hours += h
                         
                     if day_hours > 0:
